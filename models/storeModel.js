@@ -3,31 +3,37 @@ const mongoose = require(`mongoose`);
 const storeSchema = new mongoose.Schema({
   streetAddress: {
     type: String,
-    required: [true, 'A store must have an address.'],
+    required: [true, "A store must have an address."],
     trim: true,
   },
   city: {
     type: String,
-    required: [true, 'A store must have a city.'],
+    required: [true, "A store must have a city."],
     trim: true,
   },
   state: {
     type: String,
-    required: [true, 'A store must have a state.'],
+    required: [true, "A store must have a state."],
     trim: true,
   },
   zipCode: {
     type: Number,
-    required: [true, 'A store must have a zip code.'],
+    required: [true, "A store must have a zip code."],
   },
   storeNumber: {
     type: Number,
-    required: [true, 'A store must have a unique number.'],
+    required: [true, "A store must have a unique number."],
     unique: true,
   },
   retailer: {
     type: String,
-    required: [true, 'A store must have a client name, ie Circle K.'],
+    required: [true, "A store must have a retailer, ie Circle K."],
+    default: "Circle K",
+  },
+  businessUnit: {
+    type: String,
+    required: [true, "A store must have a business unit."],
+    default: "Rocky Mountain",
   },
   totalDoors: {
     type: Number,
@@ -36,6 +42,12 @@ const storeSchema = new mongoose.Schema({
     type: String,
   },
   reachInDoors: {
+    type: Number,
+  },
+  uprights: {
+    type: Number,
+  },
+  vaultDoors: {
     type: Number,
   },
   vaultRun: String,
@@ -50,7 +62,9 @@ const storeSchema = new mongoose.Schema({
       manager: String,
       startDate: Date,
       duration: Number,
-      completed: Boolean,
+      fullDay: Boolean,
+      morning: Boolean,
+      status: String,
     },
   ],
   comments: [
@@ -65,6 +79,6 @@ const storeSchema = new mongoose.Schema({
   ],
 });
 
-const Store = mongoose.model('Store', storeSchema);
+const Store = mongoose.model("Store", storeSchema);
 
 module.exports = Store;
