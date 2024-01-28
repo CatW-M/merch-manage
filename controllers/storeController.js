@@ -68,6 +68,8 @@ exports.updateStore = async (req, res) => {
     const store = await Store.findByIdAndUpdate(req.params.id, req.body, {
       new: true,
       runValidators: true,
+      $push:{ projects : req.body }
+
     });
 
     res.status(200).json({
