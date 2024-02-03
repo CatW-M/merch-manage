@@ -1,7 +1,6 @@
 const mongoose = require(`mongoose`);
-const slugify = require('slugify');
-const validator = require('validator');
-
+const slugify = require("slugify");
+// const validator = require('validator');
 
 const storeSchema = new mongoose.Schema(
   {
@@ -156,7 +155,7 @@ storeSchema.pre("save", function (next) {
 //   console.log(doc);
 //   next();
 // });
-storeSchema.pre("find", function (next) {
+storeSchema.pre(/^find/, function (next) {
   console.log(this);
   next();
 });

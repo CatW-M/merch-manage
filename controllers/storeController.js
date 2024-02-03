@@ -1,102 +1,80 @@
 const Store = require("../models/storeModel");
+const APIFeatures = require("../utils/apiFeatures");
+const AppError = require("../utils/appError");
+const catchAsync = require("../utils/catchAsync");
 
-exports.getAllStores = async (req, res) => {
-  try {
-    const queryObj = { ...req.query };
-    const excludedFields = ["page", "sort", "limit", "fields"];
-    excludedFields.forEach((el) => delete queryObj[el]);
+exports.getAllStores = catchAsync(async (req, res, next) => {
+  const features = new APIFeatures(Store.find(), req.query)
+    .filter()
+    .sort()
+    .limitFields()
+    .paginate();
 
-    let queryStr = JSON.stringify(queryObj);
-    queryStr = queryStr.replace(/\b(gte|gt|lte|lt)\b/g, (match) => `$${match}`);
+  const stores = await features.query;
 
-    const query = Store.find(JSON.parse(queryStr));
+  res.status(200).json({
+    status: "success",
+    results: stores.length,
+    data: {
+      stores,
+    },
+  });
+});
 
-    const stores = await query;
+exports.getStore = catchAsync(async (req, res, next) => {
+ 
+  const store = await Store.findById(req.params.id);
 
-    res.status(200).json({
-      status: "success",
-      results: stores.length,
-      data: {
-        stores,
-      },
-    });
-  } catch (err) {
-    res.status(404).json({
-      status: "fail",
-      message: err,
-    });
+  if(!store) {
+return next(new AppError('No Store Found With That ID!', 404))
   }
-};
 
-exports.getStore = async (req, res) => {
-  try {
-    const store = await Store.findById(req.params.id);
-    res.status(200).json({
-      status: "success",
-      data: {
-        store,
-      },
-    });
-  } catch (err) {
-    res.status(404).json({
-      status: "fail",
-      message: err,
-    });
-  }
-};
+  res.status(200).json({
+    status: "success",
+    data: {
+      store,
+    },
+  });
+});
 
-exports.createStore = async (req, res) => {
-  try {
-    const newStore = await Store.create(req.body);
+exports.createStore = catchAsync(async (req, res, next) => {
+  const newStore = await Store.create(req.body);
 
-    res.status(201).json({
-      status: "success",
-      data: {
-        store: newStore,
-      },
-    });
-  } catch (err) {
-    res.status(400).json({
-      status: "fail",
-      message: err,
-    });
-  }
-};
+  res.status(201).json({
+    status: "success",
+    data: {
+      store: newStore,
+    },
+  });
+});
 
-exports.updateStore = async (req, res) => {
-  try {
-    const store = await Store.findByIdAndUpdate(req.params.id, req.body, {
-      new: true,
-      runValidators: true,
-      $push:{ projects : req.body }
+exports.updateStore = catchAsync(async (req, res, next) => {
+  const store = await Store.findByIdAndUpdate(req.params.id, req.body, {
+    new: true,
+    runValidators: true,
+  });
 
-    });
+  if(!store) {
+    return next(new AppError('No Store Found With That ID!', 404))
+      }
 
-    res.status(200).json({
-      status: "success",
-      data: {
-        store,
-      },
-    });
-  } catch (err) {
-    res.status(404).json({
-      status: "fail",
-      message: err,
-    });
-  }
-};
+  res.status(200).json({
+    status: "success",
+    data: {
+      store,
+    },
+  });
+});
 
-exports.deleteStore = async (req, res) => {
-  try {
-    await Store.findByIdAndDelete(req.params.id);
-    res.status(204).json({
-      status: "success",
-      data: null,
-    });
-  } catch (err) {
-    res.status(404).json({
-      status: "fail",
-      message: err,
-    });
-  }
-};
+exports.deleteStore = catchAsync(async (req, res, next) => {
+  const store = await Store.findByIdAndDelete(req.params.id);
+
+  if(!store) {
+    return next(new AppError('No Store Found With That ID!', 404))
+      }
+
+  res.status(204).json({
+    status: "success",
+    data: null,
+  });
+});
