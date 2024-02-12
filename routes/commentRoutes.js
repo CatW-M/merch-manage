@@ -3,12 +3,12 @@ const commentController = require("../controllers/commentController");
 const authController = require("../controllers/authController");
 const router = express.Router({ mergeParams: true });
 
-// router.param('id', projectController.checkID);
+router.use(authController.protect);
 
 router
   .route("/")
-  .get(authController.protect, commentController.getAllComments)
-  .post(authController.protect, commentController.setProjectUserIds, commentController.createComment);
+  .get(commentController.getAllComments)
+  .post(commentController.setProjectUserIds, commentController.createComment);
 
 router
   .route("/:id")

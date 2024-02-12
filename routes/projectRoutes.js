@@ -4,13 +4,14 @@ const authController = require("../controllers/authController");
 const commentRouter = require("./commentRoutes");
 const router = express.Router({ mergeParams: true });
 
-// router.param('id', commentController.checkID);
-
+router.use(
+  authController.protect,
+  authController.restrictTo("bum", "admin", "manager"),
+);
 router.use("/:projectId/comments", commentRouter);
-// router.route('/:projectId/comments').post(authController.protect, commentController.createComment)
 router
   .route("/")
-  .get(authController.protect, projectController.getAllProjects)
+  .get(projectController.getAllProjects)
   .post(projectController.createProject);
 
 router
