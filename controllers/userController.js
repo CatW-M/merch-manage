@@ -1,7 +1,7 @@
 const User = require("../models/userModel");
-const APIFeatures = require("../utils/apiFeatures");
 const AppError = require("../utils/appError");
 const catchAsync = require("../utils/catchAsync");
+const factory = require("./handlerFactory");
 
 const filterObj = (obj, ...allowedFields) => {
   const newObj = {};
@@ -11,23 +11,10 @@ const filterObj = (obj, ...allowedFields) => {
   return newObj;
 };
 
-exports.getAllUsers = catchAsync(async (req, res, next) => {
-  const features = new APIFeatures(User.find(), req.query)
-    .filter()
-    .sort()
-    .limitFields()
-    .paginate();
-
-  const users = await features.query;
-
-  res.status(200).json({
-    status: "success",
-    results: users.length,
-    data: {
-      users,
-    },
-  });
-});
+exports.getMe = (req, res, next) => {
+  req.params.id = req.user.id;
+  next();
+};
 
 exports.updateMe = catchAsync(async (req, res, next) => {
   // Create an error if the user tries to POST password
@@ -40,7 +27,7 @@ exports.updateMe = catchAsync(async (req, res, next) => {
     );
   }
   // 2) Filtered out unwanted fields that are not allowed to be updated
-  const filteredBody = filterObj(req.body, "name", "email");
+  const filteredBody = filterObj(req.body, "name", "email", "phoneNumber");
 
   // 3) Updated user obj
   const updatedUser = await User.findByIdAndUpdate(req.user.id, filteredBody, {
@@ -65,33 +52,14 @@ exports.deleteMe = catchAsync(async (req, res, next) => {
   });
 });
 
-exports.getUser = (req, res) => {
-  res.status(500).json({
-    status: "error",
-    message: "This route is not yet defined",
-  });
-};
 exports.createUser = (req, res) => {
   res.status(500).json({
     status: "error",
-    message: "This route is not yet defined",
+    message: "This route is not defined. Please use /signup instead",
   });
 };
-exports.updateUser = (req, res) => {
-  res.status(500).json({
-    status: "error",
-    message: "This route is not yet defined",
-  });
-};
-exports.deleteUser = catchAsync(async (req, res, next) => {
-  const user = await User.findByIdAndDelete(req.params.id);
 
-  if (!user) {
-    return next(new AppError("No User Found With That ID!", 404));
-  }
-
-  res.status(204).json({
-    status: "success",
-    data: null,
-  });
-});
+exports.getAllUsers = factory.getAll(User);
+exports.getUser = factory.getOne(User);
+exports.updateUser = factory.updateOne(User);
+exports.deleteUser = factory.deleteOne(User);

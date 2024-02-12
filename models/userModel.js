@@ -15,6 +15,7 @@ const userSchema = new mongoose.Schema({
     lowercase: true,
     validate: [validator.isEmail, "Please provide a valid email"],
   },
+  phoneNumber: String,
   photo: {
     type: String,
   },
@@ -51,6 +52,12 @@ const userSchema = new mongoose.Schema({
     select: false,
   },
 });
+
+userSchema.virtual('projects', {
+  ref: 'Project',
+  foreignField: 'manager',
+  localField: '_id'
+})
 
 userSchema.pre("save", async function (next) {
   if (!this.isModified("password")) return next();

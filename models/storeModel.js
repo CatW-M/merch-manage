@@ -65,86 +65,66 @@ const storeSchema = new mongoose.Schema(
       type: Date,
       default: Date.now(),
     },
-    projects: [
-      {
-        jobType: String,
-        manager: String,
-        projectTime: {
-          type: String,
-          enum: ["AM", "PM", "Full"],
-          message: 'projectTime must be AM, PM, or "Full',
-          default: "Full",
-          required: true,
-        },
-        startDate: Date,
-        duration: Number,
-        status: {
-          type: String,
-          enum: {
-            values: ["scheduled", "completed", "rescheduled", "cancelled"],
-            message:
-              "Status is either: scheduled, completed, rescheduled, or cancelled.",
-          },
-        },
-        projectcomments: [
-          {
-            comment: String,
-            initials: String,
-            createdAt: {
-              type: Date,
-              default: Date.now(),
-            },
-          },
-        ],
-      },
-    ],
-    comments: [
-      {
-        comment: String,
-        initials: String,
-        createdAt: {
-          type: Date,
-          default: Date.now(),
-        },
-      },
-    ],
+    //     location: {
+    // // GeoJSON
+    // type: { type: String,
+    // default: 'Point',
+    // enum: ['Point']},
+    // coordinates: [Number],
+    // address: String,
+    // description: String
+
+    //     },
+
   },
   {
     toJSON: { virtuals: true },
     toObject: { virtuals: true },
   },
+  
 );
 
-storeSchema.virtual("projectsScheduled").get(function () {
-  return this.projects.length;
-});
+// storeSchema.virtual("projectsScheduled").get(function () {
+//   return this.projects.length;
+// });
 
-storeSchema.virtual("projectsCompleted").get(function () {
-  let completed = 0;
-  for (let i = 0; i < this.projects.length; i++) {
-    if (this.projects[i].status === "completed") {
-      completed++;
-      return completed;
-    }
-  }
-});
+// storeSchema.virtual("projectsCompleted").get(function () {
+//   let completed = 0;
+//   for (let i = 0; i < this.projects.length; i++) {
+//     if (this.projects[i].status === "completed") {
+//       completed++;
+//       return completed;
+//     }
+//   }
+// });
 
-storeSchema.virtual("projectsRescheduled").get(function () {
-  let rescheduled = 0;
-  for (let i = 0; i < this.projects.length; i++) {
-    if (this.projects[i].status === "rescheduled") {
-      rescheduled++;
-      return rescheduled;
-    }
-  }
-});
+// storeSchema.virtual("projectsRescheduled").get(function () {
+//   let rescheduled = 0;
+//   for (let i = 0; i < this.projects.length; i++) {
+//     if (this.projects[i].status === "rescheduled") {
+//       rescheduled++;
+//       return rescheduled;
+//     }
+//   }
+// });
+storeSchema.virtual('projects', {
+  ref: 'Project',
+  foreignField: 'store',
+  localField: '_id'
+})
 
 storeSchema.pre("save", function (next) {
   this.slug = slugify(this.retailer + "-" + this.storeNumber, { lower: true });
-  console.log(this);
   next();
 });
 
+// storeSchema.pre(/^find/, function (next) {
+//   this.populate({
+//     path: "projects",
+//     select: "-__v",
+//   });
+//   next();
+// });
 // storeSchema.pre("save", function (next) {
 //   console.log("WILL SAVE DOCUMENT");
 //   next();
@@ -154,10 +134,10 @@ storeSchema.pre("save", function (next) {
 //   console.log(doc);
 //   next();
 // });
-storeSchema.pre(/^find/, function (next) {
-  // console.log(this);
-  next();
-});
+// storeSchema.pre(/^find/, function (next) {
+//   // console.log(this);
+//   next();
+// });
 
 const Store = mongoose.model("Store", storeSchema);
 
