@@ -1,7 +1,13 @@
 extends base
+include _reviewCard
 
 block append head
-  //- script('/js/mapbox.js')
+  link(rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+    crossorigin="anonymous")
+  script(src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+    crossorigin="")
 
 mixin overviewBox(label, text, icon)
   .overview-box__detail
@@ -73,48 +79,40 @@ block content
       h2.heading-secondary.ma-bt-lg About Job Types
       p.description__text Flex Roller glide is either installed using the existing uprights in a store - this is called an Overlay - or as a retrofit, where the uprights are replaced. We also install BOF and StockMaster systems.
       p.description__text We also do beverage resets and center store resets. Sometimes a store will request adjustments and a revisit is necessary.
+
   section.section-pictures
     .picture-box
-      img.picture-box__img.picture-box__img--1(src='/img/tour-5-1.jpg', alt='The Park Camper Tour 1')
+      img.picture-box__img.picture-box__img--1(src='/img/circle-k-1.jpeg', alt='Circle K')
     .picture-box
-      img.picture-box__img.picture-box__img--2(src='/img/tour-5-2.jpg', alt='The Park Camper Tour 1')
+      img.picture-box__img.picture-box__img--2(src='/img/circle-k-2.jpeg', alt='Circle K')
     .picture-box
-      img.picture-box__img.picture-box__img--3(src='/img/tour-5-3.jpg', alt='The Park Camper Tour 1')
+      img.picture-box__img.picture-box__img--3(src='/img/circle-k-3.jpeg', alt='Circle K')
+    .picture-box
+      img.picture-box__img.picture-box__img--3(src='/img/circle-k-4.jpeg', alt='Circle K')
+    //- .picture-box
+    //-   img.picture-box__img.picture-box__img--3(src='/img/circle-k-5.jpeg', alt='Circle K')
+
 
   section.section-map
     #map(data-location=`${JSON.stringify(store.location)}`)
 
   section.section-reviews
     .reviews
-
-      .reviews__card
-        .reviews__avatar
-          img.reviews__avatar-img(src='/img/users/user-7.jpg', alt='Jim Brown')
-          h6.reviews__user Jim Brown
-        p.reviews__text Lorem ipsum dolor sit amet consectetur adipisicing elit. Cumque dignissimos sint quo commodi corrupti accusantium veniam saepe numquam.
-        .reviews__rating
-          svg.reviews__star.reviews__star--active
-            use(xlink:href='/img/icons.svg#icon-star')
-          svg.reviews__star.reviews__star--active
-            use(xlink:href='/img/icons.svg#icon-star')
-          svg.reviews__star.reviews__star--active
-            use(xlink:href='/img/icons.svg#icon-star')
-          svg.reviews__star.reviews__star--active
-            use(xlink:href='/img/icons.svg#icon-star')
-          svg.reviews__star.reviews__star--active
-            use(xlink:href='/img/icons.svg#icon-star')
+      each comment in store.comments
+        +reviewCard(comment)
+     
 
   section.section-cta
     .cta
       .cta__img.cta__img--logo
         img(src='/img/logo-round.png', alt='Merch-Manage logo')
-      img.cta__img.cta__img--1(src='/img/tour-5-2.jpg', alt='')
-      img.cta__img.cta__img--2(src='/img/tour-5-1.jpg', alt='')
+      img.cta__img.cta__img--1(src='/img/circle-k-4.jpeg', alt='')
+      img.cta__img.cta__img--2(src='/img/circle-k-5.jpeg', alt='')
       .cta__content
-        h2.heading-secondary What are you waiting for?
-        p.cta__text 10 days. 1 adventure. Infinite memories. Make it yours today!
+        h2.heading-secondary Expected to see a project?
+        p.cta__text So much to discover...
         
         if user
-          button.btn.btn--green.span-all-rows Book tour now!
+          button.btn.btn--green.span-all-rows Schedule new project!
         else
-          a.btn.btn--green.span-all-rows(href="/login") Login to book tour
+          a.btn.btn--green.span-all-rows(href="/login") Login to schedule or update projects

@@ -75,16 +75,13 @@ const storeSchema = new mongoose.Schema(
       type: Date,
       default: Date.now(),
     },
-        location: {
-    // GeoJSON
-    type: { type: String,
-    default: 'Point',
-    enum: ['Point']},
-    coordinates: [Number],
-    address: String,
-    description: String
-
-        },
+    location: {
+      // GeoJSON
+      type: { type: String, default: "Point", enum: ["Point"] },
+      coordinates: [Number],
+      address: String,
+      description: String,
+    },
   },
   {
     toJSON: { virtuals: true },
@@ -115,6 +112,12 @@ const storeSchema = new mongoose.Schema(
 //     }
 //   }
 // });
+storeSchema.virtual("comments", {
+  ref: "Comment",
+  foreignField: "store",
+  localField: "_id",
+});
+
 storeSchema.virtual("projects", {
   ref: "Project",
   foreignField: "store",
@@ -126,13 +129,13 @@ storeSchema.pre("save", function (next) {
   next();
 });
 
-// storeSchema.pre(/^find/, function (next) {
-//   this.populate({
-//     path: "projects",
-//     select: "-__v",
-//   });
-//   next();
-// });
+storeSchema.pre(/^find/, function (next) {
+  this.populate({
+    path: "projects",
+    fields: "jobType startDate scheduleStatus completed",
+  });
+  next();
+});
 // storeSchema.pre("save", function (next) {
 //   console.log("WILL SAVE DOCUMENT");
 //   next();

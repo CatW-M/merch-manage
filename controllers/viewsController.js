@@ -9,6 +9,18 @@ exports.getBase = (req, res) => {
   });
 };
 
+exports.getLoginForm = (req, res) => {
+  res.status(200).render('login', {
+    title: "Log Into Your Account"
+  })
+}
+
+exports.getSignupForm = (req, res) => {
+  res.status(200).render('login', {
+    title: "Log Into Your Account"
+  })
+}
+
 exports.getOverview = catchAsync(async (req, res, next) => {
   const stores = await Store.find();
 
@@ -19,10 +31,12 @@ exports.getOverview = catchAsync(async (req, res, next) => {
 });
 
 exports.getStore = catchAsync(async (req, res, next) => {
-  const store = await Store.findOne({ slug: req.params.slug }).populate({
-    path: "projects",
-    fields: "jobType startDate scheduleStatus completed",
-  });
+  const store = await Store.findOne({ slug: req.params.slug }).populate(
+    {
+      path: "comments",
+      fields: "body user",
+    }
+  );
   res.status(200).render("store", {
     title: `${store.storeNumber}`,
     store,
