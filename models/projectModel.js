@@ -24,10 +24,10 @@ const projectSchema = new mongoose.Schema(
         values: ["scheduled", "rescheduled", "cancelled"],
         message: "Status is either: scheduled, rescheduled, or cancelled.",
       },
-      completed: {
-        type: Boolean,
-        default: false,
-      },
+    },
+    completed: {
+      type: Boolean,
+      default: false,
     },
     slug: String,
   },

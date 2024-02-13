@@ -1,12 +1,18 @@
 const fs = require("fs");
 const mongoose = require("mongoose");
 const dotenv = require("dotenv");
-const Store = require("../models/storeModel");
+// const Store = require("../models/storeModel");
+const Project = require("../models/projectModel")
 
 dotenv.config({ path: "./.env" });
 
+const DB = process.env.DATABASE.replace(
+  '<PASSWORD>',
+  process.env.PASSWORD
+)
+
 mongoose
-  .connect(process.env.DATABASE)
+  .connect(DB)
   .then(() => {
     console.log("DB connection successful!");
   })
@@ -14,13 +20,13 @@ mongoose
     console.error("Error connecting to the database:", err.message);
   });
 
-const stores = JSON.parse(
-  fs.readFileSync("data/merch-manage-data.json", "utf-8"),
+const projects = JSON.parse(
+  fs.readFileSync("data/project-data-cw.json", "utf-8"),
 );
 
 const importData = async () => {
   try {
-    await Store.create(stores);
+    await Project.create(projects);
     console.log("DATA SUCCESSFULLY LOADED!!!!");
   } catch (err) {
     console.log(err);
@@ -29,7 +35,7 @@ const importData = async () => {
 
 const deleteData = async () => {
   try {
-    await Store.deleteMany();
+    await Project.deleteMany();
     console.log("DATA SUCCESSFULLY DELETED!!!!");
   } catch (err) {
     console.log(err);

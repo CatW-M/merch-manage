@@ -41,7 +41,17 @@ const storeSchema = new mongoose.Schema(
     totalDoors: {
       type: Number,
     },
+    nonAlcoholDoors: {
+      type: Number,
+    },
     phoneNumber: {
+      type: String,
+    },
+    glideType: {
+      type: String,
+      default: "unknown",
+    },
+    glideDimensions: {
       type: String,
     },
     reachInDoors: {
@@ -65,23 +75,21 @@ const storeSchema = new mongoose.Schema(
       type: Date,
       default: Date.now(),
     },
-    //     location: {
-    // // GeoJSON
-    // type: { type: String,
-    // default: 'Point',
-    // enum: ['Point']},
-    // coordinates: [Number],
-    // address: String,
-    // description: String
+        location: {
+    // GeoJSON
+    type: { type: String,
+    default: 'Point',
+    enum: ['Point']},
+    coordinates: [Number],
+    address: String,
+    description: String
 
-    //     },
-
+        },
   },
   {
     toJSON: { virtuals: true },
     toObject: { virtuals: true },
   },
-  
 );
 
 // storeSchema.virtual("projectsScheduled").get(function () {
@@ -107,11 +115,11 @@ const storeSchema = new mongoose.Schema(
 //     }
 //   }
 // });
-storeSchema.virtual('projects', {
-  ref: 'Project',
-  foreignField: 'store',
-  localField: '_id'
-})
+storeSchema.virtual("projects", {
+  ref: "Project",
+  foreignField: "store",
+  localField: "_id",
+});
 
 storeSchema.pre("save", function (next) {
   this.slug = slugify(this.retailer + "-" + this.storeNumber, { lower: true });

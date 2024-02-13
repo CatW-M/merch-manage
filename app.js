@@ -1,3 +1,4 @@
+const path = require("path");
 const express = require("express");
 const morgan = require("morgan");
 const rateLimit = require("express-rate-limit");
@@ -12,10 +13,17 @@ const storeRouter = require("./routes/storeRoutes");
 const userRouter = require("./routes/userRoutes");
 const projectRouter = require("./routes/projectRoutes");
 const commentRouter = require("./routes/commentRoutes");
+const viewRouter = require("./routes/viewRoutes");
 
 const app = express();
 
+app.set("view engine", "pug");
+app.set("views", path.join(__dirname, "views"));
+
 // 1) GLOBAL MIDDLEWARES
+// Serving static files
+app.use(express.static(path.join(__dirname, "public")));
+
 // SET Security HTTP Headers
 app.use(helmet());
 
@@ -55,9 +63,6 @@ app.use(
   }),
 );
 
-// Serving static files
-app.use(express.static("./public"));
-
 // Test middleware
 app.use((req, res, next) => {
   req.requestTime = new Date().toISOString();
@@ -65,7 +70,9 @@ app.use((req, res, next) => {
   next();
 });
 
-// Mounting the router
+// 3) Routes
+
+app.use("/", viewRouter);
 app.use("/api/v1/stores", storeRouter);
 app.use("/api/v1/users", userRouter);
 app.use("/api/v1/projects", projectRouter);

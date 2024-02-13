@@ -1,0 +1,120 @@
+extends base
+
+block append head
+  //- script('/js/mapbox.js')
+
+mixin overviewBox(label, text, icon)
+  .overview-box__detail
+    svg.overview-box__icon
+      use(xlink:href=`/img/icons.svg#icon-${icon}`)
+    span.overview-box__label= label
+    span.overview-box__text= text
+
+block content 
+  section.section-header
+    .header__hero
+      .header__hero-overlay &nbsp;
+      - if(store.retailer === "Circle K")
+        img.header__hero-img(src=`/img/circle-k-logo.png`, alt=`${store.retailer} - ${store.storeNumber}`)
+      - if(store.retailer === "Loves")
+        img.header__hero-img(src=`/img/loves.png`, alt=`${store.retailer} - ${store.storeNumber}`)
+
+    .heading-box
+      h1.heading-primary
+        span= `${store.retailer} ${store.storeNumber}`
+      .heading-box__group
+        .heading-box__detail
+          svg.heading-box__icon
+            use(xlink:href='/img/icons.svg#icon-clock')
+          span.heading-box__text= `${store.projects.length} projects`
+        .heading-box__detail
+          svg.heading-box__icon
+            use(xlink:href='/img/icons.svg#icon-map-pin')
+          span.heading-box__text= `${store.city}, ${store.state}`
+
+  section.section-description
+    .overview-box
+      div
+        .overview-box__group
+          h2.heading-secondary.ma-bt-lg Quick facts
+          
+          +overviewBox('Next date', 'March 2024', 'calendar')
+          +overviewBox('Difficulty', 'Medium', 'trending-up')
+          +overviewBox('Doors', '10', 'user')
+          - if(!store.glideType)
+            +overviewBox('Glide', 'Unknown', 'star')
+          - if(store.glideType)
+            +overviewBox('Glide', `${store.glideType}`, 'star')
+
+        .overview-box__group
+          h2.heading-secondary.ma-bt-lg Projects
+
+            -if(store.projects.length === 0)
+              .overview-box__detail
+                img.overview-box__img(src='/img/logo-round.png', alt='Merch-Manage Circle Logo')
+                span.overview-box__label= `No Projects Scheduled/Completed`
+                span.overview-box__text= `Check back later or schedule a project here`
+
+            each project in store.projects
+              .overview-box__detail
+                img.overview-box__img(src='/img/logo-round.png', alt='Merch-Manage Circle Logo')
+                span.overview-box__label= project.startDate.toLocaleString('en-us', {month: 'long', day: 'numeric', year: 'numeric'})
+                span.overview-box__text= `Type: ${project.jobType}`
+                |     
+                - if(project.completed)
+                  svg.overview-box__icon
+                    use(xlink:href='/img/icons.svg#icon-check-circle')
+                - if(project.scheduleStatus === "rescheduled")
+                  svg.overview-box__icon
+                    use(xlink:href='/img/icons.svg#icon-rotate-cw')
+                
+
+    .description-box
+      h2.heading-secondary.ma-bt-lg About Job Types
+      p.description__text Flex Roller glide is either installed using the existing uprights in a store - this is called an Overlay - or as a retrofit, where the uprights are replaced. We also install BOF and StockMaster systems.
+      p.description__text We also do beverage resets and center store resets. Sometimes a store will request adjustments and a revisit is necessary.
+  section.section-pictures
+    .picture-box
+      img.picture-box__img.picture-box__img--1(src='/img/tour-5-1.jpg', alt='The Park Camper Tour 1')
+    .picture-box
+      img.picture-box__img.picture-box__img--2(src='/img/tour-5-2.jpg', alt='The Park Camper Tour 1')
+    .picture-box
+      img.picture-box__img.picture-box__img--3(src='/img/tour-5-3.jpg', alt='The Park Camper Tour 1')
+
+  section.section-map
+    #map(data-location=`${JSON.stringify(store.location)}`)
+
+  section.section-reviews
+    .reviews
+
+      .reviews__card
+        .reviews__avatar
+          img.reviews__avatar-img(src='/img/users/user-7.jpg', alt='Jim Brown')
+          h6.reviews__user Jim Brown
+        p.reviews__text Lorem ipsum dolor sit amet consectetur adipisicing elit. Cumque dignissimos sint quo commodi corrupti accusantium veniam saepe numquam.
+        .reviews__rating
+          svg.reviews__star.reviews__star--active
+            use(xlink:href='/img/icons.svg#icon-star')
+          svg.reviews__star.reviews__star--active
+            use(xlink:href='/img/icons.svg#icon-star')
+          svg.reviews__star.reviews__star--active
+            use(xlink:href='/img/icons.svg#icon-star')
+          svg.reviews__star.reviews__star--active
+            use(xlink:href='/img/icons.svg#icon-star')
+          svg.reviews__star.reviews__star--active
+            use(xlink:href='/img/icons.svg#icon-star')
+
+  section.section-cta
+    .cta
+      .cta__img.cta__img--logo
+        img(src='/img/logo-round.png', alt='Merch-Manage logo')
+      img.cta__img.cta__img--1(src='/img/tour-5-2.jpg', alt='')
+      img.cta__img.cta__img--2(src='/img/tour-5-1.jpg', alt='')
+      .cta__content
+        h2.heading-secondary What are you waiting for?
+        p.cta__text 10 days. 1 adventure. Infinite memories. Make it yours today!
+        
+        if user
+          button.btn.btn--green.span-all-rows Book tour now!
+        else
+          a.btn.btn--green.span-all-rows(href="/login") Login to book tour
