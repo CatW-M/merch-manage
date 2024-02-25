@@ -37,12 +37,8 @@ exports.getOverview = catchAsync(async (req, res, next) => {
 exports.getStore = catchAsync(async (req, res, next) => {
   const store = await Store.findOne({ slug: req.params.slug }).populate({
     path: "projects",
-    fields: "manager startDate",
+    fields: "jobType startDate scheduleStatus completed",
   });
-
-  if (!store) {
-    return next(new AppError("There is no store with that number", 404));
-  }
   res.status(200).render("store", {
     title: store.storeNumber,
     store,
