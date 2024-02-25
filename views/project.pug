@@ -1,0 +1,148 @@
+extends base
+//- include _reviewCard
+
+block append head
+  link(rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+    crossorigin="anonymous")
+  script(src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+    crossorigin="")
+
+mixin overviewBox(label, text, icon)
+  .overview-box__detail
+    svg.overview-box__icon
+      use(xlink:href=`/img/icons.svg#icon-${icon}`)
+    span.overview-box__label= label
+    span.overview-box__text= text
+
+block content 
+  section.section-header
+    .header__hero
+      .header__hero-overlay &nbsp;
+      - if(`${project.store.retailer}` === "Circle K")
+        img.header__hero-img(src=`/img/circle-k-logo.png`, alt=`${project.store.retailer}`)
+      - if(`${project.store.retailer}` === "Loves")
+        img.header__hero-img(src=`/img/loves.png`, alt=`${project.store.retailer}`)
+
+    .heading-box
+      h1.heading-project
+        span= `${project.store.storeNumber} - ${project.jobType}`
+      .heading-box__group
+        //- .heading-box__detail
+        //-   svg.heading-box__icon
+        //-     use(xlink:href='/img/icons.svg#icon-clock')
+        //-   -let lastName = project.manager.name.split(' ')
+        //-     span.heading-box__text= `Assigned to:   ${lastName[1]}`
+        .heading-box__detail
+          svg.heading-box__icon
+            use(xlink:href='/img/icons.svg#icon-clock')
+            -if(project.completed === true)
+              span.heading-box__text= `Completed: ${project.startDate.toLocaleString('en-us', {month: 'long', day: 'numeric', year: 'numeric'})}`
+            -else
+              span.heading-box__text= `${project.scheduleStatus}: ${project.startDate.toLocaleString('en-us', {month: 'long', day: 'numeric', year: 'numeric'})}`
+        .heading-box__detail
+          svg.heading-box__icon
+            use(xlink:href='/img/icons.svg#icon-map-pin')
+          span.heading-box__text= `${project.store.city}, ${project.store.state}`
+
+  section.section-description
+    .overview-box
+      div
+        .overview-box__group
+          h2.heading-secondary.ma-bt-lg Quick  store facts
+          
+          +overviewBox('Retailer', `${project.store.retailer}`, 'user')
+          +overviewBox('Store Number', `${project.store.storeNumber}`, 'user')
+          +overviewBox('Address', `${project.store.streetAddress}, ${project.store.city}, ${project.store.state} ${project.store.zipCode}`, 'calendar')
+          +overviewBox('Phone', `${project.store.phoneNumber}`, 'trending-up')
+
+        //- .overview-box__group
+        //-   h2.heading-secondary.ma-bt-lg Projects
+
+        //-     -if(store.projects.length === 0)
+        //-       .overview-box__detail
+        //-         img.overview-box__img(src='/img/logo-round.png', alt='Merch-Manage Circle Logo')
+        //-         span.overview-box__label= `No Projects Scheduled/Completed`
+        //-         |
+        //-         span.overview-box__text= `Check back later or schedule a project here`
+
+        //-     each project in store.projects
+        //-       .overview-box__detail
+        //-         img.overview-box__img(src='/img/logo-round.png', alt='Merch-Manage Circle Logo')
+        //-         a(href=`/project/${project.id}`)
+        //-           span.overview-box__label= project.startDate.toLocaleString('en-us', {month: 'long', day: 'numeric', year: 'numeric'})
+        //-           span.overview-box__text= `Type: ${project.jobType}`
+        //-         |     
+        //-         - if(project.completed)
+        //-           svg.overview-box__icon
+        //-             use(xlink:href='/img/icons.svg#icon-check-circle')
+        //-         - if(project.scheduleStatus === "rescheduled")
+        //-           svg.overview-box__icon
+        //-             use(xlink:href='/img/icons.svg#icon-rotate-cw')
+                
+
+    .description-box
+      h2.heading-secondary.ma-bt-md Project Information
+      //- WITHOUT API
+      //- form.form.form-store-data(action='update-store-data' method='POST')
+
+      //- WITH API
+      form.form.form-store-data
+        .form__group 
+          .form__group.ma-bt-md
+            input#id.form__input(type='hidden', value=`${project.id}`, name="projectId")
+  
+          .form__group.ma-bt-md
+            label.form__label(for='start-Date') Start Date
+            input#start-date.form__input(type='text', value=`${project.startDate.toLocaleString('en-us', {month: 'long', day: 'numeric', year: 'numeric'})}`, name="startDate")
+          //- .form__group.ma-bt-md
+          //-   label.form__label(for='na-doors') non-alcoholic doors
+          //-   input#na-doors.form__input(type='text', value=`${store.nonAlcoholDoors}`, name="nonAlcoholDoors")
+          //- .form__group.ma-bt-md
+          //-   label.form__label(for='phone-number') phone number
+          //-   input#phone-number.form__input(type='text', value=`${store.phoneNumber}`, name="phoneNumber")
+          //- .form__group.ma-bt-md
+          //-   label.form__label(for='glide-type') glide type
+          //-   input#glide-type.form__input(type='text', value=`${store.glideType}`, name="glideType")
+          //- .form__group.ma-bt-md
+          //-   label.form__label(for='glide-dimensions') glide dimensions
+          //-   input#glide-dimensions.form__input(type='text', value=`${store.glideDimensions}`, name="glideDimensions")
+          //- .form__group.ma-bt-md
+          //-   label.form__label(for='location-long') location coordinates - longitude
+          //-   input#location-long.form__input(type='text', value=`${store.location.coordinates[0]}`, name="locationLong")
+          //- .form__group.ma-bt-md
+          //-   label.form__label(for='location-lat') location coordinates - latitude
+          //-   input#location-lat.form__input(type='text', value=`${store.location.coordinates[1]}`, name="locationLat")
+          .form__group.right
+            button.btn.btn--small.btn--green Update Project
+  section.section-pictures
+    .picture-box
+      img.picture-box__img.picture-box__img--1(src='/img/circle-k-1.jpeg', alt='Circle K')
+    .picture-box
+      img.picture-box__img.picture-box__img--2(src='/img/circle-k-2.jpeg', alt='Circle K')
+    .picture-box
+      img.picture-box__img.picture-box__img--3(src='/img/circle-k-3.jpeg', alt='Circle K')
+    .picture-box
+      img.picture-box__img.picture-box__img--1(src='/img/circle-k-4.jpeg', alt='Circle K')
+    .picture-box
+      img.picture-box__img.picture-box__img--2(src='/img/circle-k-5.jpeg', alt='Circle K')
+
+
+  section.section-map
+    #map(data-location=`${JSON.stringify(project.store.location)}`)   
+
+  section.section-cta
+    .cta
+      .cta__img.cta__img--logo
+        img(src='/img/logo-round.png', alt='Merch-Manage logo')
+      img.cta__img.cta__img--1(src='/img/circle-k-4.jpeg', alt='')
+      img.cta__img.cta__img--2(src='/img/circle-k-5.jpeg', alt='')
+      .cta__content
+        h2.heading-secondary Expected to see a project?
+        p.cta__text So much to discover...
+        
+        if user
+          button.btn.btn--green.span-all-rows Schedule new project!
+        else
+          a.btn.btn--green.span-all-rows(href="/login") Login to schedule or update projects

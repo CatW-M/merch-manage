@@ -13,7 +13,10 @@ const storeRouter = require("./routes/storeRoutes");
 const userRouter = require("./routes/userRoutes");
 const projectRouter = require("./routes/projectRoutes");
 const commentRouter = require("./routes/commentRoutes");
+const itemRouter = require("./routes/itemRoutes");
+const inventoryRouter = require("./routes/inventoryRoutes");
 const viewRouter = require("./routes/viewRoutes");
+const cookieParser = require("cookie-parser");
 
 const app = express();
 
@@ -25,8 +28,49 @@ app.set("views", path.join(__dirname, "views"));
 app.use(express.static(path.join(__dirname, "public")));
 
 // SET Security HTTP Headers
-app.use(helmet());
+app.use(
+  helmet({
+    crossOriginResourcePolicy: false,
+    crossOriginEmbedderPolicy: false,
+  }),
+);
 
+// Further HELMET configuration for Security Policy (CSP)
+const scriptSrcUrls = [
+  "https://unpkg.com/",
+  "https://tile.openstreetmap.org",
+  "https://*.cloudflare.com/",
+  "https://cdnjs.cloudflare.com/ajax/libs/axios/1.4.0/axios.min.js",
+];
+const styleSrcUrls = [
+  "https://unpkg.com/",
+  "https://tile.openstreetmap.org",
+  "https://fonts.googleapis.com/",
+];
+const connectSrcUrls = [
+  "https://unpkg.com",
+  "https://tile.openstreetmap.org",
+  "https://*.cloudflare.com/",
+  "https://bundle.js:*",
+  "ws://localhost:*/",
+];
+const fontSrcUrls = ["fonts.googleapis.com", "fonts.gstatic.com"];
+
+//set security http headers
+app.use(
+  helmet.contentSecurityPolicy({
+    directives: {
+      defaultSrc: [],
+      connectSrc: ["'self'", ...connectSrcUrls],
+      scriptSrc: ["'self'", ...scriptSrcUrls],
+      styleSrc: ["'self'", "'unsafe-inline'", ...styleSrcUrls],
+      workerSrc: ["'self'", "blob:"],
+      objectSrc: [],
+      imgSrc: ["'self'", "blob:", "data:", "https:"],
+      fontSrc: ["'self'", ...fontSrcUrls],
+    },
+  }),
+);
 // Development Logging
 
 if (process.env.NODE_ENV === "development") {
@@ -49,7 +93,9 @@ app.use(
     limit: "10kb",
   }),
 );
+app.use(express.urlencoded({extended: true, limit: "10kb"}))
 
+app.use(cookieParser());
 // Data Sanitization against NOSQL query injection
 app.use(mongoSanitize());
 
@@ -66,7 +112,7 @@ app.use(
 // Test middleware
 app.use((req, res, next) => {
   req.requestTime = new Date().toISOString();
-  // console.log(req.headers)
+  // console.log(req.cookies);
   next();
 });
 
@@ -77,6 +123,8 @@ app.use("/api/v1/stores", storeRouter);
 app.use("/api/v1/users", userRouter);
 app.use("/api/v1/projects", projectRouter);
 app.use("/api/v1/comments", commentRouter);
+app.use("/api/v1/items", itemRouter);
+app.use("/api/v1/inventories", inventoryRouter);
 
 app.all("*", (req, res, next) => {
   next(new AppError(`Can't find ${req.originalUrl} on this server!! `, 404));

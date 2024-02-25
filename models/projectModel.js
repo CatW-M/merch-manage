@@ -29,6 +29,14 @@ const projectSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    shipmentStatus: {
+      type: String,
+      default: "unknown",
+    },
+    dumpsterStatus: {
+      type: String,
+      default: "scheduled",
+    },
     slug: String,
   },
   {
@@ -48,7 +56,7 @@ projectSchema.pre("save", function (next) {
   this.slug = slugify(this.jobType + "-" + date, {
     lower: true,
   });
-  console.log(this);
+  // console.log(this);
   next();
 });
 

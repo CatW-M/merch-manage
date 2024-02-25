@@ -30,7 +30,7 @@ html {
 body {
   line-height: 1.6;
   font-weight: 300;
-  font-family: 'Lato', sans-serif;
+  font-family: "Lato", sans-serif;
   color: #777;
   padding: 3rem;
   min-height: 100vh;
@@ -110,6 +110,46 @@ body {
   background-color: #eb4d4b;
 }
 
+.projects {
+  font-size: 1.5rem;
+  font-weight: 700;
+  background-image: -webkit-gradient(
+    linear,
+    left top,
+    right top,
+    from(#216517),
+    to(#151a19)
+  );
+  
+  background-image: linear-gradient(to right, #5955a8, #1b25e6);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  letter-spacing: 0.1rem;
+  line-height: 1.3;
+  display: inline-block;
+}
+
+.projects--upcoming {
+  font-size: 1.5rem;
+  font-weight: 700;
+  background-image: -webkit-gradient(
+    linear,
+    left top,
+    right top,
+    from(#652717),
+    to(#370503)
+  );
+  
+  background-image: linear-gradient(to right, #5955a8, #1b25e6);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  letter-spacing: 0.1rem;
+  line-height: 1.3;
+  display: inline-block;
+}
+
 .heading-secondary {
   font-size: 2.25rem;
   text-transform: uppercase;
@@ -123,6 +163,7 @@ body {
   );
   background-image: linear-gradient(to right, #7dd56f, #28b487);
   -webkit-background-clip: text;
+  background-clip: text;
   color: transparent;
   letter-spacing: 0.1rem;
   line-height: 1.3;
@@ -141,13 +182,15 @@ body {
 }
 
 .heading-primary,
-.heading-tertirary {
+.heading-project,
+.heading-tertiary {
   color: #fff;
   text-transform: uppercase;
   font-weight: 300;
 }
 .heading-primary span,
-.heading-tertirary span {
+.heading-project span,
+.heading-tertiary span {
   padding: 1rem 1.5rem;
   line-height: 1;
   -webkit-box-decoration-break: clone;
@@ -173,7 +216,14 @@ body {
   margin: 0 auto;
 }
 
-.heading-tertirary {
+.heading-project {
+  font-size: 3rem;
+  text-align: center;
+  width: 70%;
+  margin: 0 auto;
+}
+
+.heading-tertiary {
   font-size: 2.75rem;
   text-align: right;
   position: absolute;
@@ -336,7 +386,7 @@ body {
 
 .section-header {
   position: relative;
-  height: 38vw;
+  height: 28vw;
   clip-path: polygon(
     0 0,
     100% 0,
@@ -356,12 +406,12 @@ body {
 }
 
 .header__hero-img {
-  -o-object-fit: cover;
-  object-fit: cover;
+  -o-object-fit: scale-down;
+  object-fit: scale-down;
   height: 100%;
   width: 100%;
-  -o-object-position: 50% 25%;
-  object-position: 50% 25%;
+  -o-object-position: 5% 25%;
+  object-position: 5% 25%;
 }
 
 .header__hero-overlay {
@@ -525,8 +575,8 @@ body {
   display: block;
   width: 100%;
   height: 110%;
-  -o-object-fit: cover;
-  object-fit: cover;
+  -o-object-fit: fill;
+  object-fit: fill;
 }
 .picture-box__img--1 {
   padding-top: 15%;
@@ -535,7 +585,7 @@ body {
   padding-bottom: 15%;
 }
 .picture-box__img--3 {
-  padding-bottom: 27%;
+  padding-bottom: 30%;
 }
 
 .section-map {
@@ -552,7 +602,7 @@ body {
 }
 
 .marker {
-  background-image: url('../img/pin.png');
+  background-image: url("../img/pin.png");
   background-size: cover;
   width: 32px;
   height: 40px;
@@ -565,7 +615,7 @@ body {
 
 .mapboxgl-popup-content {
   text-align: center;
-  font-family: 'Lato', sans-serif;
+  font-family: "Lato", sans-serif;
   padding: 1.5rem !important;
   font-size: 1.4rem;
   -webkit-box-shadow: 0 1rem 3rem rgba(0, 0, 0, 0.15) !important;
@@ -629,7 +679,7 @@ body {
 }
 .reviews:before,
 .reviews:after {
-  content: '';
+  content: "";
   width: 2rem;
 }
 .reviews__avatar {
@@ -788,7 +838,8 @@ body {
   flex: 1;
   padding: 7rem 0;
 }
-.user-view__form-container {
+.user-view__form-container,
+.user-view__inventory-container {
   max-width: 68rem;
   margin: 0 auto;
   padding: 0 8rem;

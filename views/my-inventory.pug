@@ -1,0 +1,57 @@
+extends base
+
+mixin navItem(link, text, icon, active)
+  li(class=`${active ? 'side-nav--active' : ''}`)
+    a(href=`${link}`)
+      svg
+        use(xlink:href=`img/icons.svg#icon-${icon}`)
+      | #{text}
+
+block content
+  main.main
+    .user-view
+      nav.user-view__menu
+        ul.side-nav
+          +navItem('#', 'Settings', 'settings', false)
+          +navItem('/my-projects', 'My Projects', 'briefcase', false)
+          +navItem('#', 'My comments', 'star', false)
+          +navItem('/my-inventory', 'My Inventory', 'trending-up', true)
+
+        - if(user.role === 'admin')  
+          .admin-nav
+            h5.admin-nav__heading Admin
+            ul.side-nav
+              +navItem('#', 'Manage stores', 'map', false)
+              +navItem('#', 'Manage projects', 'check', false)
+              +navItem('#', 'Manage users', 'users', false)
+              +navItem('#', 'Manage comments', 'star', false)
+              +navItem('#', 'Manage Flex Roller Spacing', 'ruler', false)
+        
+
+      .user-view__content
+        .user-view__inventory-container
+          div
+            h2.heading-secondary.ma-bt-md My Storage Unit Information
+            each el in inventory
+              h2= `${el.storageUnitFacility}`
+              h2= `Unit: ${el.unitNumber} (${el.storageUnitSize})`
+              h2=`${el.storageUnitAddress}`
+              h2=`${el.storageUnitCity}, ${el.storageUnitState} ${el.storageUnitZip}`
+              h2=`${el.storageUnitPhone}`
+        .line &nbsp;
+        .user-view__inventory-container
+          div
+            h2.heading-secondary.ma-bt-md My Inventory
+            each el in inventory
+              each item in el._items
+                -if(item.itemId.boxQuantity)
+                  h2=`${item.quantity} - ${item.itemId.description}, ${item.itemId.boxQuantity} PK`
+                -else 
+                  h2=`${item.quantity} - ${item.itemId.description}`
+        //- div
+        //-   h2.heading-secondary.ma-bt-md My Inventory
+        //-   each item in el._items
+        //-     h2= `${item.itemId.description}: ${item.quantity}`
+
+          
+

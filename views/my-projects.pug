@@ -1,0 +1,148 @@
+extends base
+
+mixin navItem(link, text, icon, active)
+  li(class=`${active ? 'side-nav--active' : ''}`)
+    a(href=`${link}`)
+      svg
+        use(xlink:href=`img/icons.svg#icon-${icon}`)
+      | #{text}
+
+block content
+  main.main
+    .user-view
+      nav.user-view__menu
+        ul.side-nav
+          +navItem('#', 'Settings', 'settings', false)
+          +navItem('/my-projects', 'My Projects', 'briefcase', true)
+          +navItem('#', 'My comments', 'star', false)
+          +navItem('/my-inventory', 'My Inventory', 'trending-up', false)
+
+        - if(user.role === 'admin')  
+          .admin-nav
+            h5.admin-nav__heading Admin
+            ul.side-nav
+              +navItem('#', 'Manage stores', 'map', false)
+              +navItem('#', 'Manage projects', 'check', false)
+              +navItem('#', 'Manage users', 'users', false)
+              +navItem('#', 'Manage comments', 'star', false)
+              +navItem('#', 'Manage Flex Roller Spacing', 'ruler', false)
+        
+
+      .user-view__content
+        .user-view__inventory-container
+          div
+            h2.heading-secondary.ma-bt-md Upcoming Projects
+            each project in projects
+              -const currentDate = new Date()
+              -if(project.startDate >= currentDate)
+                ol.projects--upcoming.right 
+                  li= `${project.startDate.toLocaleString('en-us', {month: 'long', day: 'numeric', year: 'numeric'})} (${project.projectTime}): ${project.store.retailer} - ${project.store.storeNumber}`
+                    a(href=`/project/${project.id}`)
+                    p= `Type: ${project.jobType} (${project.scheduleStatus})`
+        .line &nbsp;
+        .user-view__inventory-container
+          div
+            h2.heading-secondary.ma-bt-md Finished Projects
+            each project in projects
+              -if (project.completed)
+                a.projects.right(href=`/project/${project.id}`)= `Completed: ${project.startDate.toLocaleString('en-us', {month: 'long', day: 'numeric', year: 'numeric'})}: ${project.store.retailer} - ${project.store.storeNumber}`
+                  p= `Type: ${project.jobType}`
+          
+             
+
+//- extends base
+
+//- block content 
+//-   main.main
+//-   div
+//-     h2.heading-secondary.ma-bt-lg Upcoming
+//-     .card-container
+
+//-       each project in projects
+//-         -const currentDate = new Date()
+//-         -if(project.startDate >= currentDate)
+//-           .card
+//-             .card__header
+//-               .card__picture
+//-                 .card__picture-overlay &nbsp;
+//-                 - if(project.store.retailer === "Circle K")
+//-                   img.card__picture-img(src=`/img/circle-k-logo.png`, alt=`${project.store.retailer} - ${project.store.storeNumber}`)
+//-                 - if(project.store.retailer === "Loves")
+//-                   img.card__picture-img(src=`/img/loves.png`, alt=`${project.store.retailer} - ${project.store.storeNumber}`)
+//-               h3.heading-tertiary
+//-                 span= project.store.storeNumber 
+
+//-             .card__details
+//-               h4.card__sub-heading= project.store.retailer
+//-               p.card__text= `${project.store.streetAddress}, ${project.store.city}, ${project.store.state} ${project.store.zipCode}`
+//-               .card__data
+//-                 svg.card__icon
+//-                   use(xlink:href='/img/icons.svg#icon-globe')
+//-                 span= `Business Unit - \n${project.store.businessUnit}`
+//-               .card__data
+//-                 svg.card__icon
+//-                   use(xlink:href='/img/icons.svg#icon-phone-call')
+//-                 span= `phone: ${project.store.phoneNumber}`
+//-               .card__data
+//-                 svg.card__icon
+//-                   use(xlink:href='/img/icons.svg#icon-flag')
+//-                   -if(project.store.totalDoors)  
+//-                     span= `${project.store.totalDoors} doors`
+//-                   -if(!project.store.totalDoors)  
+//-                     span Need update for total doors
+
+//-             .card__footer
+//-               p
+//-                 span.card__footer-value= `${project.scheduleStatus}: ${project.startDate.toLocaleString('en-us', {month: 'long', day: 'numeric', year: 'numeric'})}`
+//-                 | 
+//-                 span.card__footer-text= `${project.jobType}`
+//-               p.card__ratings
+//-                 span.card__footer-value 4.9
+//-                 | 
+//-                 span.card__footer-text rating (21)
+//-               a.btn.btn--green.btn--small(href=`/project/${project.id}`) Details
+//-   div.main
+//-     h2.heading-secondary.ma-bt-lg Completed
+//-     .card-container
+//-       each project in projects
+//-         -if (project.completed)
+//-           .card
+//-             .card__header
+//-               .card__picture
+//-                 .card__picture-overlay &nbsp;
+//-                 - if(project.store.retailer === "Circle K")
+//-                   img.card__picture-img(src=`/img/circle-k-logo.png`, alt=`${project.store.retailer} - ${project.store.storeNumber}`)
+//-                 - if(project.store.retailer === "Loves")
+//-                   img.card__picture-img(src=`/img/loves.png`, alt=`${project.store.retailer} - ${project.store.storeNumber}`)
+//-               h3.heading-tertiary
+//-                 span= project.store.storeNumber 
+
+//-             .card__details
+//-               h4.card__sub-heading= project.store.retailer
+//-               p.card__text= `${project.store.streetAddress}, ${project.store.city}, ${project.store.state} ${project.store.zipCode}`
+//-               .card__data
+//-                 svg.card__icon
+//-                   use(xlink:href='/img/icons.svg#icon-globe')
+//-                 span= `Business Unit - \n${project.store.businessUnit}`
+//-               .card__data
+//-                 svg.card__icon
+//-                   use(xlink:href='/img/icons.svg#icon-phone-call')
+//-                 span= `phone: ${project.store.phoneNumber}`
+//-               .card__data
+//-                 svg.card__icon
+//-                   use(xlink:href='/img/icons.svg#icon-flag')
+//-                   -if(project.store.totalDoors)  
+//-                     span= `${project.store.totalDoors} doors`
+//-                   -if(!project.store.totalDoors)  
+//-                     span Need update for total doors
+
+//-             .card__footer
+//-               p
+//-                 span.card__footer-value= `Completed: ${project.startDate.toLocaleString('en-us', {month: 'long', day: 'numeric', year: 'numeric'})}`
+//-                 | 
+//-                 span.card__footer-text= `${project.jobType}`
+//-               p.card__ratings
+//-                 span.card__footer-value 4.9
+//-                 | 
+//-                 span.card__footer-text rating (21)
+//-               a.btn.btn--green.btn--small(href=`/project/${project.id}`) Details

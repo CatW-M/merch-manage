@@ -53,11 +53,11 @@ const userSchema = new mongoose.Schema({
   },
 });
 
-userSchema.virtual('projects', {
-  ref: 'Project',
-  foreignField: 'manager',
-  localField: '_id'
-})
+userSchema.virtual("projects", {
+  ref: "Project",
+  foreignField: "manager",
+  localField: "_id",
+});
 
 userSchema.pre("save", async function (next) {
   if (!this.isModified("password")) return next();
@@ -105,7 +105,7 @@ userSchema.methods.createPasswordResetToken = function () {
     .update(resetToken)
     .digest("hex");
 
-  console.log({ resetToken }, this.passwordResetToken);
+  // console.log({ resetToken }, this.passwordResetToken);
 
   this.passwordResetExpires = Date.now() + 10 * 60 * 1000;
 

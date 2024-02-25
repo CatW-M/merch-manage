@@ -1,7 +1,13 @@
 extends base
+//- include _reviewCard
 
 block append head
-  //- script('/js/mapbox.js')
+  link(rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+    crossorigin="anonymous")
+  script(src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+    crossorigin="")
 
 mixin overviewBox(label, text, icon)
   .overview-box__detail
@@ -38,13 +44,13 @@ block content
         .overview-box__group
           h2.heading-secondary.ma-bt-lg Quick facts
           
-          +overviewBox('Next date', 'March 2024', 'calendar')
-          +overviewBox('Difficulty', 'Medium', 'trending-up')
-          +overviewBox('Doors', '10', 'user')
+          +overviewBox('Address', `${store.streetAddress}, ${store.city}, ${store.state} ${store.zipCode}`, 'calendar')
+          +overviewBox('Phone', `${store.phoneNumber}`, 'trending-up')
+          +overviewBox('Doors', `${store.totalDoors}`, 'user')
           - if(!store.glideType)
             +overviewBox('Glide', 'Unknown', 'star')
           - if(store.glideType)
-            +overviewBox('Glide', `${store.glideType}`, 'star')
+            +overviewBox('Glide', `${store.glideType}: ${store.glideDimensions}`, 'star')
 
         .overview-box__group
           h2.heading-secondary.ma-bt-lg Projects
@@ -53,68 +59,86 @@ block content
               .overview-box__detail
                 img.overview-box__img(src='/img/logo-round.png', alt='Merch-Manage Circle Logo')
                 span.overview-box__label= `No Projects Scheduled/Completed`
+                |
                 span.overview-box__text= `Check back later or schedule a project here`
 
             each project in store.projects
               .overview-box__detail
                 img.overview-box__img(src='/img/logo-round.png', alt='Merch-Manage Circle Logo')
-                span.overview-box__label= project.startDate.toLocaleString('en-us', {month: 'long', day: 'numeric', year: 'numeric'})
-                span.overview-box__text= `Type: ${project.jobType}`
-                |     
-                - if(project.completed)
-                  svg.overview-box__icon
-                    use(xlink:href='/img/icons.svg#icon-check-circle')
-                - if(project.scheduleStatus === "rescheduled")
-                  svg.overview-box__icon
-                    use(xlink:href='/img/icons.svg#icon-rotate-cw')
+                -const projectID = JSON.stringify(project.id)
+                  a(href=`/project/${project.id}`)
+                    span.overview-box__label= project.startDate.toLocaleString('en-us', {month: 'long', day: 'numeric', year: 'numeric'})
+                    span.overview-box__text= `Type: ${project.jobType}`
+                  |     
+                  - if(project.completed)
+                    svg.overview-box__icon
+                      use(xlink:href='/img/icons.svg#icon-check-circle')
+                  - if(project.scheduleStatus === "rescheduled")
+                    svg.overview-box__icon
+                      use(xlink:href='/img/icons.svg#icon-rotate-cw')
                 
 
     .description-box
-      h2.heading-secondary.ma-bt-lg About Job Types
-      p.description__text Flex Roller glide is either installed using the existing uprights in a store - this is called an Overlay - or as a retrofit, where the uprights are replaced. We also install BOF and StockMaster systems.
-      p.description__text We also do beverage resets and center store resets. Sometimes a store will request adjustments and a revisit is necessary.
+      h2.heading-secondary.ma-bt-md Store Information
+      //- WITHOUT API
+      //- form.form.form-store-data(action='update-store-data' method='POST')
+
+      //- WITH API
+      form.form.form-store-data
+        .form__group 
+          .form__group.ma-bt-md
+            input#id.form__input(type='hidden', value=`${store.id}`, name="storeId")
+  
+          .form__group.ma-bt-md
+            label.form__label(for='total-doors') total doors
+            input#total-doors.form__input(type='text', value=`${store.totalDoors}`, name="totalDoors")
+          .form__group.ma-bt-md
+            label.form__label(for='na-doors') non-alcoholic doors
+            input#na-doors.form__input(type='text', value=`${store.nonAlcoholDoors}`, name="nonAlcoholDoors")
+          .form__group.ma-bt-md
+            label.form__label(for='phone-number') phone number
+            input#phone-number.form__input(type='text', value=`${store.phoneNumber}`, name="phoneNumber")
+          .form__group.ma-bt-md
+            label.form__label(for='glide-type') glide type
+            input#glide-type.form__input(type='text', value=`${store.glideType}`, name="glideType")
+          .form__group.ma-bt-md
+            label.form__label(for='glide-dimensions') glide dimensions
+            input#glide-dimensions.form__input(type='text', value=`${store.glideDimensions}`, name="glideDimensions")
+          .form__group.ma-bt-md
+            label.form__label(for='location-long') location coordinates - longitude
+            input#location-long.form__input(type='text', value=`${store.location.coordinates[0]}`, name="locationLong")
+          .form__group.ma-bt-md
+            label.form__label(for='location-lat') location coordinates - latitude
+            input#location-lat.form__input(type='text', value=`${store.location.coordinates[1]}`, name="locationLat")
+          .form__group.right
+            button.btn.btn--small.btn--green Update Store
   section.section-pictures
     .picture-box
-      img.picture-box__img.picture-box__img--1(src='/img/tour-5-1.jpg', alt='The Park Camper Tour 1')
+      img.picture-box__img.picture-box__img--1(src='/img/circle-k-1.jpeg', alt='Circle K')
     .picture-box
-      img.picture-box__img.picture-box__img--2(src='/img/tour-5-2.jpg', alt='The Park Camper Tour 1')
+      img.picture-box__img.picture-box__img--2(src='/img/circle-k-2.jpeg', alt='Circle K')
     .picture-box
-      img.picture-box__img.picture-box__img--3(src='/img/tour-5-3.jpg', alt='The Park Camper Tour 1')
+      img.picture-box__img.picture-box__img--3(src='/img/circle-k-3.jpeg', alt='Circle K')
+    .picture-box
+      img.picture-box__img.picture-box__img--1(src='/img/circle-k-4.jpeg', alt='Circle K')
+    .picture-box
+      img.picture-box__img.picture-box__img--2(src='/img/circle-k-5.jpeg', alt='Circle K')
+
 
   section.section-map
-    #map(data-location=`${JSON.stringify(store.location)}`)
-
-  section.section-reviews
-    .reviews
-
-      .reviews__card
-        .reviews__avatar
-          img.reviews__avatar-img(src='/img/users/user-7.jpg', alt='Jim Brown')
-          h6.reviews__user Jim Brown
-        p.reviews__text Lorem ipsum dolor sit amet consectetur adipisicing elit. Cumque dignissimos sint quo commodi corrupti accusantium veniam saepe numquam.
-        .reviews__rating
-          svg.reviews__star.reviews__star--active
-            use(xlink:href='/img/icons.svg#icon-star')
-          svg.reviews__star.reviews__star--active
-            use(xlink:href='/img/icons.svg#icon-star')
-          svg.reviews__star.reviews__star--active
-            use(xlink:href='/img/icons.svg#icon-star')
-          svg.reviews__star.reviews__star--active
-            use(xlink:href='/img/icons.svg#icon-star')
-          svg.reviews__star.reviews__star--active
-            use(xlink:href='/img/icons.svg#icon-star')
+    #map(data-location=`${JSON.stringify(store.location)}`)   
 
   section.section-cta
     .cta
       .cta__img.cta__img--logo
         img(src='/img/logo-round.png', alt='Merch-Manage logo')
-      img.cta__img.cta__img--1(src='/img/tour-5-2.jpg', alt='')
-      img.cta__img.cta__img--2(src='/img/tour-5-1.jpg', alt='')
+      img.cta__img.cta__img--1(src='/img/circle-k-4.jpeg', alt='')
+      img.cta__img.cta__img--2(src='/img/circle-k-5.jpeg', alt='')
       .cta__content
-        h2.heading-secondary What are you waiting for?
-        p.cta__text 10 days. 1 adventure. Infinite memories. Make it yours today!
+        h2.heading-secondary Expected to see a project?
+        p.cta__text So much to discover...
         
         if user
-          button.btn.btn--green.span-all-rows Book tour now!
+          button.btn.btn--green.span-all-rows Schedule new project!
         else
-          a.btn.btn--green.span-all-rows(href="/login") Login to book tour
+          a.btn.btn--green.span-all-rows(href="/login") Login to schedule or update projects
