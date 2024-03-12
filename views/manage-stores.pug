@@ -1,0 +1,41 @@
+extends base
+
+mixin navItem(link, text, icon, active)
+  li(class=`${active ? 'side-nav--active' : ''}`)
+    a(href=`${link}`)
+      svg
+        use(xlink:href=`img/icons.svg#icon-${icon}`)
+      | #{text}
+block content
+  main.main
+    .user-view
+      nav.user-view__menu
+        ul.side-nav
+          +navItem('/my-account', 'Settings', 'settings', false)
+          +navItem('/my-projects', 'My Projects', 'briefcase', false)
+          +navItem('#', 'My comments', 'star', false)
+          +navItem('/my-inventory', 'My Inventory', 'trending-up', false)
+
+        - if(user.role === 'admin')  
+          .admin-nav
+            h5.admin-nav__heading Admin
+            ul.side-nav
+              +navItem('#', 'Manage stores', 'map', true)
+              +navItem('#', 'Manage projects', 'check', false)
+              +navItem('#', 'Manage users', 'users', false)
+              +navItem('#', 'Manage comments', 'star', false)
+              +navItem('#', 'Manage Flex Roller Spacing', 'ruler', false)
+        
+
+      .user-view__content
+        .user-view__form-container
+          h2.heading-secondary.ma-bt-md Find a store
+          form.form.form-store-manage
+            .form__group
+              label.form__label(for='store-number') Store Number
+              input#search.form__input(type='text', placeholder='store number...', required)
+            .form__group.right
+              button.btn.btn--small.btn--green Search
+        .line &nbsp;
+        .user-results-container
+          ul#results-list.list

@@ -45,6 +45,15 @@ exports.getStore = catchAsync(async (req, res, next) => {
   });
 });
 
+exports.getStoreToUpdate = catchAsync(async (req, res, next) => {
+  const stores = await Store.find();
+
+  res.status(200).render("manage-stores", {
+    title: "Manage Stores",
+    stores,
+  });
+});
+
 exports.getProject = catchAsync(async (req, res, next) => {
   const project = await Project.findById({ _id: req.params.slug })
     .populate("store")

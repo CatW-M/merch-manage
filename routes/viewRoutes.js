@@ -26,5 +26,11 @@ router.get(
   viewsController.getMyInventory,
 );
 
+router.get(
+  "/manage-stores",
+  authController.protect,
+  viewsController.getStoreToUpdate,
+);
+
 // router.post("/store/update-store-data", viewsController.updateStoreData);
 module.exports = router;
